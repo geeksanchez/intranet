@@ -92,12 +92,6 @@
                       <p>Gestionar casos</p>
                     </a>
                   </li>
-                  <li class="nav-item">
-                    <a href="{{ route('admincovid.export') }}" class="nav-link">
-                      <i class="fas fa-circle nav-icon"></i>
-                      <p>Exportar casos</p>
-                    </a>
-                  </li>
                 </ul>
               </li>
               @endcan

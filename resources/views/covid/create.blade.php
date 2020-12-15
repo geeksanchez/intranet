@@ -54,7 +54,7 @@
                                 <div class="form-row">
                                 <div class="form-group col-md-4">
                                     <label for="temperature">Temperatura corporal *</label>
-                                    <input type="text" class="form-control" name="temperature" value="{{ old('temperature') }}" required aria-required="true">
+                                    <input type="number" step="0.1" class="form-control" name="temperature" value="{{ old('temperature') }}" required aria-required="true">
                                 </div>
                                 </div>
                                 <div class="checkbox-group">

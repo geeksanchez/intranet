@@ -11,7 +11,7 @@
 
     @include('adminlte.sidebar')
 
-    @include('pqrs.admin.show-content')
+    @include('covid.admin.edit-pending-content')
   
     @include('adminlte.control-sidebar')
 

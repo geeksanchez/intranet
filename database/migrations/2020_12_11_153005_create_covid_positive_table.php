@@ -16,12 +16,11 @@ class CreateCovidPositiveTable extends Migration
         Schema::create('covid_positive', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('covid_id');
-            $table->string('contact_type', 100);
+            $table->string('contact_type', 100)->nullable();
             $table->text('description')->nullable();
             $table->text('symptoms')->nullable();
-            $table->string('treatment', 100);
+            $table->string('treatment', 100)->nullable();
             $table->text('notes')->nullable();
-            $table->bigInteger('user_id');
             $table->timestamps();
         });
     }

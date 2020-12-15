@@ -16,12 +16,11 @@ class CreateCovidFollowTable extends Migration
         Schema::create('covid_follow', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('covid_id');
-            $table->string('disability', 100);
-            $table->date('disability_date');
+            $table->string('disability', 100)->nullable();
+            $table->date('disability_date')->nullable();
             $table->date('return_date')->nullable();
             $table->text('diagnosis')->nullable();
             $table->text('notes')->nullable();
-            $table->bigInteger('user_id');
             $table->timestamps();
         });
     }

@@ -11,7 +11,7 @@
 
     @include('adminlte.sidebar')
 
-    @include('covid.admin.edit-content')
+    @include('covid.admin.show-pending-content')
   
     @include('adminlte.control-sidebar')
 
