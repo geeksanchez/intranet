@@ -8,8 +8,10 @@ use App\Covid;
 use App\Employee;
 use App\CovidFollow;
 use App\CovidPositive;
+use App\CovidRelated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use App\Exports\CovidExport;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -27,6 +29,10 @@ class AdmincovidController extends Controller
      */
     public function index()
     {
+        if (! Gate::allows('covid_manage')) {
+            return abort(401);
+        }
+        
         $covid = DB::table('covid')
             ->join('employee', 'employee_id', '=', 'employee.id')
             ->select('covid.*', 'employee.fullname', 'employee.doctype', 'employee.document', 'employee.phone')
@@ -66,13 +72,24 @@ class AdmincovidController extends Controller
      */
     public function show($id)
     {
+        if (! Gate::allows('covid_manage')) {
+            return abort(401);
+        }
+
         $covid = Covid::findOrFail($id);
         if ($covid->covid_state_id == 4) {
             $employee = Employee::findOrFail($covid->employee_id);
             $age = now()->diff($employee->birthdate);
             $employee['age'] = $age->y;
             $covid_follow = CovidFollow::where('covid_id', '=', $covid->id)->first();
-            return view('covid.admin.show-pending', compact('covid', 'covid_follow', 'employee'));
+            $covid_related = DB::table('covid_related')
+                ->where('covid_related.covid_id', '=', $covid->id)
+                ->join('employee', 'covid_related.employee_id', '=', 'employee.id')
+                ->join('covid', 'employee.id', '=', 'covid.employee.id')
+                ->join('covid_state', 'covid.covid_state_id', '=', 'covid_state.id')
+                ->select('employee.*', 'covid.*', 'covid_state.name')
+                ->get();
+            return view('covid.admin.show-pending', compact('covid', 'covid_follow', 'employee', 'covid_related'));
         } elseif ($covid->covid_state_id == 5) {
             $employee = Employee::findOrFail($covid->employee_id);
             $age = now()->diff($employee->birthdate);
@@ -81,6 +98,7 @@ class AdmincovidController extends Controller
             $covid_positive = CovidPositive::where('covid_id', '=', $covid->id)->first();
             return view('covid.admin.show-confirmed', compact('covid', 'covid_positive', 'covid_follow', 'employee'));
         }
+        return view('covid.admin.index');
 
     }
 
@@ -91,6 +109,10 @@ class AdmincovidController extends Controller
      */
     public function edit($id)
     {
+        if (! Gate::allows('covid_manage')) {
+            return abort(401);
+        }
+
         $covid = Covid::findOrFail($id);
         if ($covid->covid_state_id == 2) {
             $employee = Employee::findOrFail($covid->employee_id);
@@ -105,7 +127,15 @@ class AdmincovidController extends Controller
                 ->select('covid.*', 'covid_state.name')
                 ->orderBy('covid.id', 'DESC')
                 ->get();
-            return view('covid.admin.edit-pending', compact('covid', 'covid_follow', 'other_covid', 'employee'));
+            $covid_related = DB::select(DB::raw
+                ("SELECT t2.doctype, t2.document, t2.fullname, covid_state.name, t2.created_at FROM 
+                (SELECT t1.doctype, t1.document, t1.fullname, covid.covid_state_id, covid.created_at FROM 
+                (SELECT covid_related.employee_id AS employee_id, employee.doctype AS doctype, employee.document AS document, employee.fullname AS fullname FROM 
+                covid_related INNER JOIN employee ON covid_related.employee_id = employee.id 
+                WHERE covid_related.covid_id = $covid->id) AS t1, covid 
+                WHERE covid.employee_id = t1.employee_id) AS t2, covid_state 
+                WHERE covid_state.id = t2.covid_state_id ORDER BY t2.created_at DESC LIMIT 1"));
+            return view('covid.admin.edit-pending', compact('covid', 'covid_follow', 'other_covid', 'employee', 'covid_related'));
         } elseif ($covid->covid_state_id == 3) {
             $employee = Employee::findOrFail($covid->employee_id);
             $age = now()->diff($employee->birthdate);
@@ -120,7 +150,15 @@ class AdmincovidController extends Controller
                 ->select('covid.*', 'covid_state.name')
                 ->orderBy('covid.id', 'DESC')
                 ->get();
-            return view('covid.admin.edit-confirmed', compact('covid', 'covid_positive', 'covid_follow', 'other_covid', 'employee'));
+            $covid_related = DB::select(DB::raw
+                ("SELECT t2.doctype, t2.document, t2.fullname, covid_state.name, t2.created_at FROM 
+                (SELECT t1.doctype, t1.document, t1.fullname, covid.covid_state_id, covid.created_at FROM 
+                (SELECT covid_related.employee_id AS employee_id, employee.doctype AS doctype, employee.document AS document, employee.fullname AS fullname FROM 
+                covid_related INNER JOIN employee ON covid_related.employee_id = employee.id 
+                WHERE covid_related.covid_id = $covid->id) AS t1, covid 
+                WHERE covid.employee_id = t1.employee_id) AS t2, covid_state 
+                WHERE covid_state.id = t2.covid_state_id ORDER BY t2.created_at DESC LIMIT 1"));
+            return view('covid.admin.edit-confirmed', compact('covid', 'covid_positive', 'covid_follow', 'other_covid', 'employee', 'covid_related'));
         }
     }
 
@@ -132,6 +170,10 @@ class AdmincovidController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (! Gate::allows('covid_manage')) {
+            return abort(401);
+        }
+
         if ($request->state == "2") {
             $covid_follow = CovidFollow::findOrFail($id);
 
@@ -150,7 +192,7 @@ class AdmincovidController extends Controller
                 if ($request->covid_positivo) {
                     $covid->covid_state_id = 3;
                 } elseif ($request->cerrar) {
-                    $covid_follow->notes = $request->notes . PHP_EOL . "Cierra caso";
+                    $covid_follow->notes = $covid_follow->notes . PHP_EOL . "Cierra caso";
                     $covid->covid_state_id = 4;
                 }
                 $covid->save();
@@ -173,13 +215,15 @@ class AdmincovidController extends Controller
                 if ($request->cerrar) {
                 $covid_positive->notes = $covid_positive->notes . PHP_EOL . "Cierra caso";
                 $covid_follow = CovidFollow::where('covid_id', '=', $covid_positive->covid_id)->first();
-                $covid_follow->return_date = (new \DateTime())->format('Y-m-d H:i:s');
+                if ($covid_follow->return_date == NULL) {
+                    $covid_follow->return_date = (new \DateTime())->format('Y-m-d H:i:s');
+                    $covid_follow->save();
+                }
                 $covid = Covid::findOrFail($covid_positive->covid_id);
                 $covid->covid_state_id = 5;
                 $covid->save();
             }
 
-            $covid_follow->save();
             $covid_positive->save();
         }
         return redirect('admincovid');
@@ -202,6 +246,10 @@ class AdmincovidController extends Controller
      */
     public function export()
     {
+        if (! Gate::allows('covid_manage')) {
+            return abort(401);
+        }
+
         return Excel::download(new CovidExport, 'covid.csv', \Maatwebsite\Excel\Excel::CSV, [
             'Content-Type' => 'text/csv',
         ]);

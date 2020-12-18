@@ -52,10 +52,20 @@
                         <div class="card card-primary">
                             <div class="card-body">
                                 <div class="form-row">
-                                <div class="form-group col-md-4">
-                                    <label for="temperature">Temperatura corporal *</label>
-                                    <input type="number" step="0.1" class="form-control" name="temperature" value="{{ old('temperature') }}" required aria-required="true">
+                                    <div class="form-group col-md-4">
+                                        <label for="worktype">Tipo de trabajo a realizar hoy *</label>
+                                        <select name="worktype" class="form-control" required aria-required="true">
+                                            <option value="" {{ old('worktype') == "" ? "selected" : "" }} disabled hidden></option>
+                                            <option value="OFICINA" {{ old('worktype') == "OFICINA" ? "selected" : "" }}>Presencial</option>
+                                            <option value="CASA" {{ old('worktype') == "CASA" ? "selected" : "" }}>Trabajo en casa</option>
+                                        </select>
+                                    </div>
                                 </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="temperature">Temperatura corporal *</label>
+                                        <input type="number" step="0.1" class="form-control" name="temperature" value="{{ old('temperature') }}" required aria-required="true">
+                                    </div>
                                 </div>
                                 <div class="checkbox-group">
                                     <label>Síntomas: *</label>

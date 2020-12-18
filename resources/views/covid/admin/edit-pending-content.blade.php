@@ -71,7 +71,7 @@
                       <label for="disability">Tipo de ausencia</label>
                       <select class="form-control" name="disability">
                         <option value="" {{ old('disability') == "" ? "selected" : "" }} disabled hidden></option>
-                        <option value="TELETRABAJO" {{ $covid_follow->disability == "TELETRABAJO" ? "selected" : "" }}>Teletrabajo</option>
+                        <option value="TELETRABAJO" {{ $covid_follow->disability == "TELETRABAJO" ? "selected" : "" }}>Trabajo en casa</option>
                         <option value="INCAPACIDAD" {{ $covid_follow->disability == "INCAPACIDAD" ? "selected" : "" }}>Incapacidad</option>
                       </select>
                     </div>
@@ -118,6 +118,34 @@
                   </div>
                   <button type="submit" class="btn btn-primary">Guardar</button>
                 </form>
+              </div>
+            </div>
+
+            <div class="card card-primery">
+              <div class="card-header">
+                <h3 class="card-title">Contacto estrecho (otros empleados)</h3>
+              </div>
+              <div class="card-body">
+                <table id="simpletable" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>Documento</th>
+                      <th>Nombre</th>
+                      <th>Último reporte</th>
+                      <th>Fecha último reporte</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($covid_related as $related)
+                    <tr>
+                      <td>{{ $related->doctype . $related->document }}</td>
+                      <td>{{ $related->fullname }}</td>
+                      <td>{{ $related->name }}</td>
+                      <td>{{ $related->created_at }}</td>
+                    </tr>
+                    @endforeach
+                  </tbody>
+                </table>
               </div>
             </div>
 

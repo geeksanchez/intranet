@@ -91,7 +91,7 @@
 
                   <div class="form-group">
                     <label for="symptoms">Síntomas</label>
-                    <textarea class="form-control" name="symptoms">{{ $covid_positive->description }}</textarea>
+                    <textarea class="form-control" name="symptoms">{{ $covid_positive->symptoms }}</textarea>
                   </div>
 
                     <div class="form-group">

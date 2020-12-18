@@ -7,7 +7,13 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
+    'App\\Covid' => $baseDir . '/app/Covid.php',
+    'App\\CovidFollow' => $baseDir . '/app/CovidFollow.php',
+    'App\\CovidPositive' => $baseDir . '/app/CovidPositive.php',
+    'App\\CovidState' => $baseDir . '/app/CovidState.php',
+    'App\\Employee' => $baseDir . '/app/Employee.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
+    'App\\Exports\\CovidExport' => $baseDir . '/app/Exports/CovidExport.php',
     'App\\Exports\\PqrsExport' => $baseDir . '/app/Exports/PqrsExport.php',
     'App\\Exports\\SeguimientosExport' => $baseDir . '/app/Exports/SeguimientosExport.php',
     'App\\Http\\Controllers\\Auth\\ChangePasswordController' => $baseDir . '/app/Http/Controllers/Auth/ChangePasswordController.php',

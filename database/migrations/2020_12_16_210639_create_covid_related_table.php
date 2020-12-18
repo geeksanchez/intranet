@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCovidTable extends Migration
+class CreateCovidRelatedTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,10 @@ class CreateCovidTable extends Migration
      */
     public function up()
     {
-        Schema::create('covid', function (Blueprint $table) {
+        Schema::create('covid_related', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('covid_id');
             $table->bigInteger('employee_id');
-            $table->string('worktype', 50);
-            $table->float('temperature');
-            $table->text('symptoms')->nullable();
-            $table->string('close_contact', 50);
-            $table->bigInteger('covid_state_id')->default(1);
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ class CreateCovidTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('covid');
+        Schema::dropIfExists('covid_related');
     }
 }

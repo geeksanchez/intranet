@@ -583,7 +583,13 @@ class ComposerStaticInite0edb8e1b3420ca59c8d51c1dc571fd4
 
     public static $classMap = array (
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
+        'App\\Covid' => __DIR__ . '/../..' . '/app/Covid.php',
+        'App\\CovidFollow' => __DIR__ . '/../..' . '/app/CovidFollow.php',
+        'App\\CovidPositive' => __DIR__ . '/../..' . '/app/CovidPositive.php',
+        'App\\CovidState' => __DIR__ . '/../..' . '/app/CovidState.php',
+        'App\\Employee' => __DIR__ . '/../..' . '/app/Employee.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+        'App\\Exports\\CovidExport' => __DIR__ . '/../..' . '/app/Exports/CovidExport.php',
         'App\\Exports\\PqrsExport' => __DIR__ . '/../..' . '/app/Exports/PqrsExport.php',
         'App\\Exports\\SeguimientosExport' => __DIR__ . '/../..' . '/app/Exports/SeguimientosExport.php',
         'App\\Http\\Controllers\\Auth\\ChangePasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ChangePasswordController.php',

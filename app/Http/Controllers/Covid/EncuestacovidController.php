@@ -43,6 +43,7 @@ class EncuestacovidController extends Controller
         $validator = Validator::make($request->all(), [
             'doctype'       => 'required',
             'document'      => 'required',
+            'worktype'      => 'required',
             'temperature'   => 'required',
             'close_contact' => 'required',
             'symptom'       => 'required',
