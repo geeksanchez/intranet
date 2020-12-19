@@ -116,12 +116,14 @@
                       </label>
                     </div>
                   </div>
-                  <button type="submit" class="btn btn-primary">Guardar</button>
+                  <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                  </div>
                 </form>
               </div>
             </div>
 
-            <div class="card card-primery">
+            <div class="card card-primary">
               <div class="card-header">
                 <h3 class="card-title">Contacto estrecho (otros empleados)</h3>
               </div>
@@ -146,10 +148,15 @@
                     @endforeach
                   </tbody>
                 </table>
+                <div class="card-footer">
+                  <a class="btn btn-xs btn-primary" href="{{ route('covidrelated.related', $covid->id) }}">
+                    Gestionar
+                  </a>
+                </div>
               </div>
             </div>
 
-            <div class="card card-primery">
+            <div class="card card-primary">
               <div class="card-header">
                 <h3 class="card-title">Otros casos COVID-19 de la persona</h3>
               </div>

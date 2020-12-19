@@ -82,13 +82,14 @@ class AdmincovidController extends Controller
             $age = now()->diff($employee->birthdate);
             $employee['age'] = $age->y;
             $covid_follow = CovidFollow::where('covid_id', '=', $covid->id)->first();
-            $covid_related = DB::table('covid_related')
-                ->where('covid_related.covid_id', '=', $covid->id)
-                ->join('employee', 'covid_related.employee_id', '=', 'employee.id')
-                ->join('covid', 'employee.id', '=', 'covid.employee.id')
-                ->join('covid_state', 'covid.covid_state_id', '=', 'covid_state.id')
-                ->select('employee.*', 'covid.*', 'covid_state.name')
-                ->get();
+            $covid_related = DB::select(DB::raw
+                ("SELECT t2.doctype, t2.document, t2.fullname, covid_state.name, t2.created_at FROM 
+                (SELECT t1.doctype, t1.document, t1.fullname, covid.covid_state_id, covid.created_at FROM 
+                (SELECT covid_related.employee_id AS employee_id, employee.doctype AS doctype, employee.document AS document, employee.fullname AS fullname FROM 
+                covid_related INNER JOIN employee ON covid_related.employee_id = employee.id 
+                WHERE covid_related.covid_id = $covid->id) AS t1, covid 
+                WHERE covid.employee_id = t1.employee_id) AS t2, covid_state 
+                WHERE covid_state.id = t2.covid_state_id ORDER BY t2.created_at DESC LIMIT 1"));
             return view('covid.admin.show-pending', compact('covid', 'covid_follow', 'employee', 'covid_related'));
         } elseif ($covid->covid_state_id == 5) {
             $employee = Employee::findOrFail($covid->employee_id);
@@ -96,7 +97,15 @@ class AdmincovidController extends Controller
             $employee['age'] = $age->y;
             $covid_follow = CovidFollow::where('covid_id', '=', $covid->id)->first();
             $covid_positive = CovidPositive::where('covid_id', '=', $covid->id)->first();
-            return view('covid.admin.show-confirmed', compact('covid', 'covid_positive', 'covid_follow', 'employee'));
+            $covid_related = DB::select(DB::raw
+                ("SELECT t2.doctype, t2.document, t2.fullname, covid_state.name, t2.created_at FROM 
+                (SELECT t1.doctype, t1.document, t1.fullname, covid.covid_state_id, covid.created_at FROM 
+                (SELECT covid_related.employee_id AS employee_id, employee.doctype AS doctype, employee.document AS document, employee.fullname AS fullname FROM 
+                covid_related INNER JOIN employee ON covid_related.employee_id = employee.id 
+                WHERE covid_related.covid_id = $covid->id) AS t1, covid 
+                WHERE covid.employee_id = t1.employee_id) AS t2, covid_state 
+                WHERE covid_state.id = t2.covid_state_id ORDER BY t2.created_at DESC LIMIT 1"));
+            return view('covid.admin.show-confirmed', compact('covid', 'covid_positive', 'covid_follow', 'employee', 'covid_related'));
         }
         return view('covid.admin.index');
 
