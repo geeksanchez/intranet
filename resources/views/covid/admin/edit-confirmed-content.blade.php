@@ -187,7 +187,9 @@
                   </tbody>
                 </table>
                 <div class="card-footer">
-                  <button type="submit" class="btn btn-primary">Agregar</button>
+                  <a class="btn btn-xs btn-primary" href="{{ route('admincovid.related', $covid->id) }}">
+                    Editar
+                  </a>
                 </div>
               </div>
             </div>
@@ -217,6 +219,7 @@
                 </table>
               </div>
             </div>
+            
           </div><!-- /.container-fluid -->
         </div>
         <!-- /.content -->

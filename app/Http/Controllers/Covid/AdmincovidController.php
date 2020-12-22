@@ -83,13 +83,17 @@ class AdmincovidController extends Controller
             $employee['age'] = $age->y;
             $covid_follow = CovidFollow::where('covid_id', '=', $covid->id)->first();
             $covid_related = DB::select(DB::raw
-                ("SELECT t2.doctype, t2.document, t2.fullname, covid_state.name, t2.created_at FROM 
-                (SELECT t1.doctype, t1.document, t1.fullname, covid.covid_state_id, covid.created_at FROM 
-                (SELECT covid_related.employee_id AS employee_id, employee.doctype AS doctype, employee.document AS document, employee.fullname AS fullname FROM 
-                covid_related INNER JOIN employee ON covid_related.employee_id = employee.id 
-                WHERE covid_related.covid_id = $covid->id) AS t1, covid 
-                WHERE covid.employee_id = t1.employee_id) AS t2, covid_state 
-                WHERE covid_state.id = t2.covid_state_id ORDER BY t2.created_at DESC LIMIT 1"));
+                ("SELECT t3.* FROM 
+                    (SELECT t2.id, t2.employee_id, t2.doctype, t2.document, t2.fullname, covid_state.name, t2.created_at FROM 
+                    (SELECT t1.employee_id, t1.doctype, t1.document, t1.fullname, covid.covid_state_id, covid.created_at, covid.id FROM 
+                        (SELECT covid_related.employee_id AS employee_id, employee.doctype AS doctype, employee.document AS document, employee.fullname AS fullname FROM covid_related 
+                                INNER JOIN employee ON covid_related.employee_id = employee.id WHERE covid_related.covid_id = $covid->id) AS t1, covid 
+                    WHERE covid.employee_id = t1.employee_id) AS t2, covid_state
+                    WHERE covid_state.id = t2.covid_state_id) AS t3,
+                    (SELECT covid.* FROM 
+                        (SELECT covid.*, MAX(created_at) AS max_date FROM covid GROUP BY covid.employee_id) AS p1, covid
+                    WHERE covid.created_at = p1.max_date) AS t4
+                WHERE t3.id = t4.id"));
             return view('covid.admin.show-pending', compact('covid', 'covid_follow', 'employee', 'covid_related'));
         } elseif ($covid->covid_state_id == 5) {
             $employee = Employee::findOrFail($covid->employee_id);
@@ -98,16 +102,20 @@ class AdmincovidController extends Controller
             $covid_follow = CovidFollow::where('covid_id', '=', $covid->id)->first();
             $covid_positive = CovidPositive::where('covid_id', '=', $covid->id)->first();
             $covid_related = DB::select(DB::raw
-                ("SELECT t2.doctype, t2.document, t2.fullname, covid_state.name, t2.created_at FROM 
-                (SELECT t1.doctype, t1.document, t1.fullname, covid.covid_state_id, covid.created_at FROM 
-                (SELECT covid_related.employee_id AS employee_id, employee.doctype AS doctype, employee.document AS document, employee.fullname AS fullname FROM 
-                covid_related INNER JOIN employee ON covid_related.employee_id = employee.id 
-                WHERE covid_related.covid_id = $covid->id) AS t1, covid 
-                WHERE covid.employee_id = t1.employee_id) AS t2, covid_state 
-                WHERE covid_state.id = t2.covid_state_id ORDER BY t2.created_at DESC LIMIT 1"));
+                ("SELECT t3.* FROM 
+                    (SELECT t2.id, t2.employee_id, t2.doctype, t2.document, t2.fullname, covid_state.name, t2.created_at FROM 
+                    (SELECT t1.employee_id, t1.doctype, t1.document, t1.fullname, covid.covid_state_id, covid.created_at, covid.id FROM 
+                        (SELECT covid_related.employee_id AS employee_id, employee.doctype AS doctype, employee.document AS document, employee.fullname AS fullname FROM covid_related 
+                                INNER JOIN employee ON covid_related.employee_id = employee.id WHERE covid_related.covid_id = $covid->id) AS t1, covid 
+                    WHERE covid.employee_id = t1.employee_id) AS t2, covid_state
+                    WHERE covid_state.id = t2.covid_state_id) AS t3,
+                    (SELECT covid.* FROM 
+                        (SELECT covid.*, MAX(created_at) AS max_date FROM covid GROUP BY covid.employee_id) AS p1, covid
+                    WHERE covid.created_at = p1.max_date) AS t4
+                WHERE t3.id = t4.id"));
             return view('covid.admin.show-confirmed', compact('covid', 'covid_positive', 'covid_follow', 'employee', 'covid_related'));
         }
-        return view('covid.admin.index');
+        return back()->withInput();
 
     }
 
@@ -137,13 +145,17 @@ class AdmincovidController extends Controller
                 ->orderBy('covid.id', 'DESC')
                 ->get();
             $covid_related = DB::select(DB::raw
-                ("SELECT t2.doctype, t2.document, t2.fullname, covid_state.name, t2.created_at FROM 
-                (SELECT t1.doctype, t1.document, t1.fullname, covid.covid_state_id, covid.created_at FROM 
-                (SELECT covid_related.employee_id AS employee_id, employee.doctype AS doctype, employee.document AS document, employee.fullname AS fullname FROM 
-                covid_related INNER JOIN employee ON covid_related.employee_id = employee.id 
-                WHERE covid_related.covid_id = $covid->id) AS t1, covid 
-                WHERE covid.employee_id = t1.employee_id) AS t2, covid_state 
-                WHERE covid_state.id = t2.covid_state_id ORDER BY t2.created_at DESC LIMIT 1"));
+                ("SELECT t3.* FROM 
+                    (SELECT t2.id, t2.employee_id, t2.doctype, t2.document, t2.fullname, covid_state.name, t2.created_at FROM 
+                    (SELECT t1.employee_id, t1.doctype, t1.document, t1.fullname, covid.covid_state_id, covid.created_at, covid.id FROM 
+                        (SELECT covid_related.employee_id AS employee_id, employee.doctype AS doctype, employee.document AS document, employee.fullname AS fullname FROM covid_related 
+                                INNER JOIN employee ON covid_related.employee_id = employee.id WHERE covid_related.covid_id = $covid->id) AS t1, covid 
+                    WHERE covid.employee_id = t1.employee_id) AS t2, covid_state
+                    WHERE covid_state.id = t2.covid_state_id) AS t3,
+                    (SELECT covid.* FROM 
+                        (SELECT covid.*, MAX(created_at) AS max_date FROM covid GROUP BY covid.employee_id) AS p1, covid
+                    WHERE covid.created_at = p1.max_date) AS t4
+                WHERE t3.id = t4.id"));
             return view('covid.admin.edit-pending', compact('covid', 'covid_follow', 'other_covid', 'employee', 'covid_related'));
         } elseif ($covid->covid_state_id == 3) {
             $employee = Employee::findOrFail($covid->employee_id);
@@ -160,13 +172,17 @@ class AdmincovidController extends Controller
                 ->orderBy('covid.id', 'DESC')
                 ->get();
             $covid_related = DB::select(DB::raw
-                ("SELECT t2.doctype, t2.document, t2.fullname, covid_state.name, t2.created_at FROM 
-                (SELECT t1.doctype, t1.document, t1.fullname, covid.covid_state_id, covid.created_at FROM 
-                (SELECT covid_related.employee_id AS employee_id, employee.doctype AS doctype, employee.document AS document, employee.fullname AS fullname FROM 
-                covid_related INNER JOIN employee ON covid_related.employee_id = employee.id 
-                WHERE covid_related.covid_id = $covid->id) AS t1, covid 
-                WHERE covid.employee_id = t1.employee_id) AS t2, covid_state 
-                WHERE covid_state.id = t2.covid_state_id ORDER BY t2.created_at DESC LIMIT 1"));
+                ("SELECT t3.* FROM 
+                    (SELECT t2.id, t2.employee_id, t2.doctype, t2.document, t2.fullname, covid_state.name, t2.created_at FROM 
+                    (SELECT t1.employee_id, t1.doctype, t1.document, t1.fullname, covid.covid_state_id, covid.created_at, covid.id FROM 
+                        (SELECT covid_related.employee_id AS employee_id, employee.doctype AS doctype, employee.document AS document, employee.fullname AS fullname FROM covid_related 
+                                INNER JOIN employee ON covid_related.employee_id = employee.id WHERE covid_related.covid_id = $covid->id) AS t1, covid 
+                    WHERE covid.employee_id = t1.employee_id) AS t2, covid_state
+                    WHERE covid_state.id = t2.covid_state_id) AS t3,
+                    (SELECT covid.* FROM 
+                        (SELECT covid.*, MAX(created_at) AS max_date FROM covid GROUP BY covid.employee_id) AS p1, covid
+                    WHERE covid.created_at = p1.max_date) AS t4
+                WHERE t3.id = t4.id"));
             return view('covid.admin.edit-confirmed', compact('covid', 'covid_positive', 'covid_follow', 'other_covid', 'employee', 'covid_related'));
         }
     }
@@ -263,4 +279,55 @@ class AdmincovidController extends Controller
             'Content-Type' => 'text/csv',
         ]);
     }
+
+    public function related($covid_id)
+    {
+        if (! Gate::allows('covid_manage')) {
+            return abort(401);
+        }
+        $covid = Covid::where('covid.id', '=', $covid_id)
+            ->join('employee', 'covid.employee_id', '=', 'employee.id')
+            ->select('covid.*', 'employee.fullname')
+            ->first();
+        $covidrelated = CovidRelated::where('covid_id', '=', $covid_id)
+            ->join('employee', 'employee_id', '=', 'employee.id')
+            ->select('employee.fullname')
+            ->get();
+        $employee = Employee::orderBy('fullname', 'ASC')->get();
+        return view('covid.admin.edit-related', compact('covid', 'covidrelated', 'employee'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updaterelated(Request $request, $covid_id)
+    {
+        if (! Gate::allows('covid_manage')) {
+            return abort(401);
+        }
+
+        $covid = Covid::find($covid_id);
+
+        $input["covid_id"] = $covid_id;
+        $input["employee_id"] = $request->employee;
+
+        if (($covid->employee_id != $input["employee_id"]) && ($input["employee_id"] != NULL)) {
+            $covidrelated = CovidRelated::firstOrCreate($input);
+        }
+
+        $covid = Covid::where('covid.id', '=', $covid_id)
+            ->join('employee', 'covid.employee_id', '=', 'employee.id')
+            ->select('covid.*', 'employee.fullname')
+            ->first();
+        $covidrelated = CovidRelated::where('covid_id', '=', $covid_id)
+            ->join('employee', 'employee_id', '=', 'employee.id')
+            ->select('employee.fullname')
+            ->get();
+        $employee = Employee::orderBy('fullname', 'ASC')->get();
+        return view('covid.admin.edit-related', compact('covid', 'covidrelated', 'employee'));
+    }
+
 }

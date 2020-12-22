@@ -43,8 +43,8 @@ Route::group(['namespace' => 'Farmacoseguridad'], function () {
 
 Route::group(['namespace' => 'Covid'], function () {
     Route::resource('encuestacovid', 'EncuestacovidController');
-    Route::resource('admincovid', 'AdmincovidController');
-    Route::resource('covidrelated', 'CovidRelatedController');
-    Route::get('covidrelated.related', 'CovidRelatedController@related');
     Route::get('admincovid.export', 'AdmincovidController@export')->name('admincovid.export');
+    Route::get('admincovid/related/{id}', 'AdmincovidController@related')->name('admincovid.related');
+    Route::put('admincovid/related/update/{id}', 'AdmincovidController@updaterelated')->name('admincovid.related.update');
+    Route::resource('admincovid', 'AdmincovidController');
 });

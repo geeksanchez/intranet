@@ -23,6 +23,9 @@ class CreateEmployeeTable extends Migration
             $table->string('phone', 50)->nullable();
             $table->string('address', 255)->nullable();
             $table->string('city', 100)->nullable();
+            $table->string('arl', 255);
+            $table->string('eps', 255);
+            $table->integer('active')->unsigned()->default(1);
             $table->timestamps();
         });
     }

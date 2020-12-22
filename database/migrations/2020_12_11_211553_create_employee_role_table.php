@@ -20,10 +20,6 @@ class CreateEmployeeRoleTable extends Migration
             $table->string('position', 255)->nullable();
             $table->string('area', 255)->nullable();
             $table->string('company', 255);
-            $table->string('arl', 255);
-            $table->string('eps', 255);
-            $table->date('admission')->nullable();
-            $table->date('retirement')->nullable();
             $table->timestamps();
         });
     }

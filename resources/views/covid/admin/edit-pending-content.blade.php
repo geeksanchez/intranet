@@ -149,8 +149,8 @@
                   </tbody>
                 </table>
                 <div class="card-footer">
-                  <a class="btn btn-xs btn-primary" href="{{ route('covidrelated.related', $covid->id) }}">
-                    Gestionar
+                  <a class="btn btn-xs btn-primary" href="{{ route('admincovid.related', $covid->id) }}">
+                    Editar
                   </a>
                 </div>
               </div>
@@ -181,6 +181,7 @@
                 </table>
               </div>
             </div>
+            
           </div><!-- /.container-fluid -->
         </div>
         <!-- /.content -->
