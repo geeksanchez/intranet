@@ -16,7 +16,7 @@
                 <h3 class="card-title">Información general</h3>
               </div>
               <div class="card-body">
-                <table id="simpletable" class="table table-bordered table-striped">
+                <table id="basics" class="table table-bordered table-striped">
                   <thead>
                     <tr>
                       <th>Documento</th>
@@ -36,7 +36,7 @@
                     </tr>
                   </tbody>
                 </table>
-                <table id="simpletable" class="table table-bordered table-striped">
+                <table id="reports" class="table table-bordered table-striped">
                   <thead>
                     <tr>
                       <th>Temperatura</th>
@@ -99,6 +99,32 @@
                     </div>
                   </div>
 
+                <div class="form-group">
+                  <label for="samples">Pruebas COVID-19</label>
+                  <table id="samples" class="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Resultado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach ($samples as $sample)
+                      <tr>
+                        <td>{{ $sample->sample_date }}</td>
+                        <td>{{ $sample->result }}</td>
+                      </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="form-group">
+                  <a class="btn btn-xs btn-primary" href="{{ route('admincovid.sample', $covid->id) }}">
+                    Agregar prueba
+                  </a>
+                </div>
+
                   <div class="form-group">
                     <label for="notes">Seguimientos anteriores</label>
                     <textarea class="form-control" name="notes" readonly>{{ $covid_follow->notes }}</textarea>
@@ -128,7 +154,7 @@
                 <h3 class="card-title">Contacto estrecho (otros empleados)</h3>
               </div>
               <div class="card-body">
-                <table id="simpletable" class="table table-bordered table-striped">
+                <table id="contacts" class="table table-bordered table-striped">
                   <thead>
                     <tr>
                       <th>Documento</th>
@@ -161,7 +187,7 @@
                 <h3 class="card-title">Otros casos COVID-19 de la persona</h3>
               </div>
               <div class="card-body">
-                <table id="simpletable" class="table table-bordered table-striped">
+                <table id="others" class="table table-bordered table-striped">
                   <thead>
                     <tr>
                       <th>Reporte</th>

@@ -94,10 +94,36 @@
                     <textarea class="form-control" name="symptoms">{{ $covid_positive->symptoms }}</textarea>
                   </div>
 
-                    <div class="form-group">
-                      <label for="positive_notes">Seguimientos anteriores</label>
-                      <textarea class="form-control" name="positive_notes" readonly>{{ $covid_follow->notes . $covid_positive->notes }}</textarea>
-                    </div>
+                  <div class="form-group">
+                    <label for="samples">Pruebas COVID-19</label>
+                    <table id="samples" class="table table-bordered table-striped">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Resultado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach ($samples as $sample)
+                        <tr>
+                          <td>{{ $sample->sample_date }}</td>
+                          <td>{{ $sample->result }}</td>
+                        </tr>
+                        @endforeach
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="form-group">
+                    <a class="btn btn-xs btn-primary" href="{{ route('admincovid.sample', $covid->id) }}">
+                      Agregar prueba
+                    </a>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="positive_notes">Seguimientos anteriores</label>
+                    <textarea class="form-control" name="positive_notes" readonly>{{ $covid_follow->notes . $covid_positive->notes }}</textarea>
+                  </div>
 
                   <div class="form-group">
                     <label for="follow">Actualización:</label>
@@ -130,7 +156,7 @@
                     <label for="disability">Tipo de ausencia</label>
                     <select class="form-control" name="disability">
                       <option value="" {{ old('disability') == "" ? "selected" : "" }} disabled hidden></option>
-                      <option value="TELETRABAJO" {{ $covid_follow->disability == "TELETRABAJO" ? "selected" : "" }}>Teletrabajo</option>
+                      <option value="TELETRABAJO" {{ $covid_follow->disability == "TELETRABAJO" ? "selected" : "" }}>Trabajo en casa</option>
                       <option value="INCAPACIDAD" {{ $covid_follow->disability == "INCAPACIDAD" ? "selected" : "" }}>Incapacidad</option>
                     </select>
                   </div>

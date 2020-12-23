@@ -46,5 +46,7 @@ Route::group(['namespace' => 'Covid'], function () {
     Route::get('admincovid.export', 'AdmincovidController@export')->name('admincovid.export');
     Route::get('admincovid/related/{id}', 'AdmincovidController@related')->name('admincovid.related');
     Route::put('admincovid/related/update/{id}', 'AdmincovidController@updaterelated')->name('admincovid.related.update');
+    Route::get('admincovid/sample/{id}', 'AdmincovidController@sample')->name('admincovid.sample');
+    Route::put('admincovid/sample/update/{id}', 'AdmincovidController@updatesample')->name('admincovid.sample.update');
     Route::resource('admincovid', 'AdmincovidController');
 });

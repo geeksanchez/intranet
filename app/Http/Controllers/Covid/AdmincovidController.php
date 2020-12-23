@@ -9,6 +9,7 @@ use App\Employee;
 use App\CovidFollow;
 use App\CovidPositive;
 use App\CovidRelated;
+use App\CovidSample;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -81,6 +82,7 @@ class AdmincovidController extends Controller
             $employee = Employee::findOrFail($covid->employee_id);
             $age = now()->diff($employee->birthdate);
             $employee['age'] = $age->y;
+            $samples = CovidSample::where('covid_id', '=', $id)->get();
             $covid_follow = CovidFollow::where('covid_id', '=', $covid->id)->first();
             $covid_related = DB::select(DB::raw
                 ("SELECT t3.* FROM 
@@ -94,11 +96,12 @@ class AdmincovidController extends Controller
                         (SELECT covid.*, MAX(created_at) AS max_date FROM covid GROUP BY covid.employee_id) AS p1, covid
                     WHERE covid.created_at = p1.max_date) AS t4
                 WHERE t3.id = t4.id"));
-            return view('covid.admin.show-pending', compact('covid', 'covid_follow', 'employee', 'covid_related'));
+            return view('covid.admin.show-pending', compact('covid', 'covid_follow', 'employee', 'covid_related', 'samples'));
         } elseif ($covid->covid_state_id == 5) {
             $employee = Employee::findOrFail($covid->employee_id);
             $age = now()->diff($employee->birthdate);
             $employee['age'] = $age->y;
+            $samples = CovidSample::where('covid_id', '=', $id)->get();
             $covid_follow = CovidFollow::where('covid_id', '=', $covid->id)->first();
             $covid_positive = CovidPositive::where('covid_id', '=', $covid->id)->first();
             $covid_related = DB::select(DB::raw
@@ -113,7 +116,7 @@ class AdmincovidController extends Controller
                         (SELECT covid.*, MAX(created_at) AS max_date FROM covid GROUP BY covid.employee_id) AS p1, covid
                     WHERE covid.created_at = p1.max_date) AS t4
                 WHERE t3.id = t4.id"));
-            return view('covid.admin.show-confirmed', compact('covid', 'covid_positive', 'covid_follow', 'employee', 'covid_related'));
+            return view('covid.admin.show-confirmed', compact('covid', 'covid_positive', 'covid_follow', 'employee', 'covid_related', 'samples'));
         }
         return back()->withInput();
 
@@ -136,6 +139,9 @@ class AdmincovidController extends Controller
             $age = now()->diff($employee->birthdate);
             $employee['age'] = $age->y;
             $covid_follow = CovidFollow::firstOrCreate(['covid_id' => $covid->id]);
+            $samples = CovidSample::where('covid_id', '=', $id)
+                ->orderBy('sample_date', 'DESC')
+                ->get();
             $other_covid = DB::table('covid')
                 ->where('employee_id', '=', $covid->employee_id)
                 ->where('covid_state_id', '>', '1')
@@ -156,13 +162,14 @@ class AdmincovidController extends Controller
                         (SELECT covid.*, MAX(created_at) AS max_date FROM covid GROUP BY covid.employee_id) AS p1, covid
                     WHERE covid.created_at = p1.max_date) AS t4
                 WHERE t3.id = t4.id"));
-            return view('covid.admin.edit-pending', compact('covid', 'covid_follow', 'other_covid', 'employee', 'covid_related'));
+            return view('covid.admin.edit-pending', compact('covid', 'covid_follow', 'other_covid', 'employee', 'covid_related', 'samples'));
         } elseif ($covid->covid_state_id == 3) {
             $employee = Employee::findOrFail($covid->employee_id);
             $age = now()->diff($employee->birthdate);
             $employee['age'] = $age->y;
             $covid_follow = CovidFollow::where('covid_id', '=', $covid->id)->first();
             $covid_positive = CovidPositive::firstOrCreate(['covid_id' => $covid->id]);
+            $samples = CovidSample::where('covid_id', '=', $id)->get();
             $other_covid = DB::table('covid')
                 ->where('employee_id', '=', $covid->employee_id)
                 ->where('covid_state_id', '>', '1')
@@ -183,7 +190,7 @@ class AdmincovidController extends Controller
                         (SELECT covid.*, MAX(created_at) AS max_date FROM covid GROUP BY covid.employee_id) AS p1, covid
                     WHERE covid.created_at = p1.max_date) AS t4
                 WHERE t3.id = t4.id"));
-            return view('covid.admin.edit-confirmed', compact('covid', 'covid_positive', 'covid_follow', 'other_covid', 'employee', 'covid_related'));
+            return view('covid.admin.edit-confirmed', compact('covid', 'covid_positive', 'covid_follow', 'other_covid', 'employee', 'covid_related', 'samples'));
         }
     }
 
@@ -316,6 +323,19 @@ class AdmincovidController extends Controller
 
         if (($covid->employee_id != $input["employee_id"]) && ($input["employee_id"] != NULL)) {
             $covidrelated = CovidRelated::firstOrCreate($input);
+            $covidReport = Covid::where('employee_id', '=', $input["employee_id"])
+                ->whereIn('covid_state_id', [2, 3])
+                ->get();
+            if ($covidReport->isEmpty()) {
+                $newcovid = new Covid;
+                $newcovid->employee_id = $input["employee_id"];
+                $newcovid->worktype = 'OFICINA';
+                $newcovid->temperature = 36;
+                $newcovid->close_contact = 'SI';
+                $newcovid->covid_state_id = 2;
+                $newcovid->symptoms = json_encode(array('CONTACTO ESTRECHO ' . $covid_id));
+                $newcovid->save();
+            };
         }
 
         $covid = Covid::where('covid.id', '=', $covid_id)
@@ -330,4 +350,27 @@ class AdmincovidController extends Controller
         return view('covid.admin.edit-related', compact('covid', 'covidrelated', 'employee'));
     }
 
+    public function sample($covid_id)
+    {
+        if (! Gate::allows('covid_manage')) {
+            return abort(401);
+        }
+        $covid = Covid::find($covid_id);
+        $employee = Employee::find($covid->employee_id);
+        return view('covid.admin.create-sample', compact('covid', 'employee'));
+    }
+
+    public function updatesample(Request $request, $covid_id)
+    {
+        if (! Gate::allows('covid_manage')) {
+            return abort(401);
+        }
+        $sample = new CovidSample;
+        $sample->covid_id = $covid_id;
+        $sample->sample_date = $request->sample_date;
+        $sample->result = $request->sample_result;
+        $sample->save();
+        return redirect()->route('admincovid.edit', $covid_id);
+    }
+    
 }

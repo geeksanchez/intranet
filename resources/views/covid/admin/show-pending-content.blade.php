@@ -95,6 +95,26 @@
                   </div>
 
                   <div class="form-group">
+                    <label for="samples">Pruebas COVID-19</label>
+                    <table id="samples" class="table table-bordered table-striped">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Resultado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach ($samples as $sample)
+                        <tr>
+                          <td>{{ $sample->sample_date }}</td>
+                          <td>{{ $sample->result }}</td>
+                        </tr>
+                        @endforeach
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="form-group">
                     <label for="notes">Seguimiento</label>
                     <textarea class="form-control" name="notes" readonly>{{ $covid_follow->notes }}</textarea>
                   </div>

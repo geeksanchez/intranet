@@ -60,39 +60,59 @@
               <div class="card-body">
 
                 <div class="form-group row">
-                    <div class="col">
-                      <label for="contact_type">Tipo de contagio</label>
-                      <select class="form-control" name="contact_type" disabled>
-                        <option value="" {{ old('contact_type') == "" ? "selected" : "" }} disabled hidden></option>
-                        <option value="SOCIAL" {{ $covid_positive->contact_type == "SOCIAL" ? "selected" : "" }}>Contagio social</option>
-                        <option value="LABORAL" {{ $covid_positive->contact_type == "LABORAL" ? "selected" : "" }}>Exposición laboral</option>
-                      </select>
-                    </div>
-
-                    <div class="col">
-                      <label for="treatment">Tratamiento</label>
-                      <select class="form-control" name="treatment" disabled>
-                        <option value="" {{ old('treatment') == "" ? "selected" : "" }} disabled hidden></option>
-                        <option value="CASA" {{ $covid_positive->treatment == "CASA" ? "selected" : "" }}>En casa</option>
-                        <option value="HOSPITAL" {{ $covid_positive->treatment == "HOSPITAL" ? "selected" : "" }}>Hospitalario</option>
-                      </select>
-                    </div>
+                  <div class="col">
+                    <label for="contact_type">Tipo de contagio</label>
+                    <select class="form-control" name="contact_type" disabled>
+                      <option value="" {{ old('contact_type') == "" ? "selected" : "" }} disabled hidden></option>
+                      <option value="SOCIAL" {{ $covid_positive->contact_type == "SOCIAL" ? "selected" : "" }}>Contagio social</option>
+                      <option value="LABORAL" {{ $covid_positive->contact_type == "LABORAL" ? "selected" : "" }}>Exposición laboral</option>
+                    </select>
                   </div>
 
-                  <div class="form-group">
-                    <label for="description">Descripción del contagio</label>
-                    <textarea class="form-control" name="description" readonly>{{ $covid_positive->description }}</textarea>
+                  <div class="col">
+                    <label for="treatment">Tratamiento</label>
+                    <select class="form-control" name="treatment" disabled>
+                      <option value="" {{ old('treatment') == "" ? "selected" : "" }} disabled hidden></option>
+                      <option value="CASA" {{ $covid_positive->treatment == "CASA" ? "selected" : "" }}>En casa</option>
+                      <option value="HOSPITAL" {{ $covid_positive->treatment == "HOSPITAL" ? "selected" : "" }}>Hospitalario</option>
+                    </select>
                   </div>
+                </div>
 
-                  <div class="form-group">
-                    <label for="symptoms">Síntomas</label>
-                    <textarea class="form-control" name="symptoms" readonly>{{ $covid_positive->description }}</textarea>
-                  </div>
+                <div class="form-group">
+                  <label for="description">Descripción del contagio</label>
+                  <textarea class="form-control" name="description" readonly>{{ $covid_positive->description }}</textarea>
+                </div>
 
-                    <div class="form-group">
-                      <label for="positive_notes">Seguimientos</label>
-                      <textarea class="form-control" name="positive_notes" readonly>{{ $covid_follow->notes . $covid_positive->notes }}</textarea>
-                    </div>
+                <div class="form-group">
+                  <label for="symptoms">Síntomas</label>
+                  <textarea class="form-control" name="symptoms" readonly>{{ $covid_positive->description }}</textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="samples">Pruebas COVID-19</label>
+                  <table id="samples" class="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Resultado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach ($samples as $sample)
+                      <tr>
+                        <td>{{ $sample->sample_date }}</td>
+                        <td>{{ $sample->result }}</td>
+                      </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="form-group">
+                  <label for="positive_notes">Seguimientos</label>
+                  <textarea class="form-control" name="positive_notes" readonly>{{ $covid_follow->notes . $covid_positive->notes }}</textarea>
+                </div>
 
               </div>
             </div>
