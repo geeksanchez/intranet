@@ -62,9 +62,15 @@
                 </a>
                 <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="{{ route('adminpqrs.index') }}" class="nav-link {{ request()->is('/pqrsadmin') ? 'active' : '' }}">
+                    <a href="{{ route('adminpqrs.index') }}" class="nav-link">
                       <i class="fas fa-circle nav-icon"></i>
                       <p>Listar PQRS</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="{{ route('adminpqrs.search', '0') }}" class="nav-link">
+                      <i class="fas fa-circle nav-icon"></i>
+                      <p>Buscar PQRS</p>
                     </a>
                   </li>
                   <li class="nav-item">

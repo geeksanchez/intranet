@@ -96,7 +96,8 @@ class AdminpqrsController extends Controller
             $pqrs->active = 2;
         }
         $pqrs->user_id = auth()->user()->id;
-        $pqrs->feedback = $request->feedback;
+        $pqrs->feedback = $pqrs->feedback . PHP_EOL .  auth()->user()->name . PHP_EOL . 
+          (new \DateTime())->format('Y-m-d H:i:s') . PHP_EOL . $request->newfeedback;
         $pqrs->save();
         return redirect('adminpqrs');
     }
@@ -123,4 +124,18 @@ class AdminpqrsController extends Controller
             'Content-Type' => 'text/csv',
         ]);
     }
+
+    public function search($document)
+    {
+        $user = auth()->user()->id;
+        $pqrs = Pqrs::where('document', $document)
+            ->get();
+        return view('pqrs.admin.search', compact('pqrs'));
+    }
+
+    public function find(Request $request)
+    {
+        return redirect()->route('adminpqrs.search', $request->document);
+    }
+
 }

@@ -31,8 +31,10 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['namespace' => 'Pqrs'], function () {
     Route::resource('pqrs', 'PqrsController');
+    Route::get('adminpqrs/search/{id}', 'AdminpqrsController@search')->name('adminpqrs.search');
+    Route::post('adminpqrs/find', 'AdminpqrsController@find')->name('adminpqrs.find');
+    Route::get('adminpqrs/export', 'AdminpqrsController@export')->name('adminpqrs.export');
     Route::resource('adminpqrs', 'AdminpqrsController');
-    Route::get('adminpqrs.export', 'AdminpqrsController@export')->name('adminpqrs.export');
 });
 
 Route::group(['namespace' => 'Farmacoseguridad'], function () {
@@ -43,7 +45,7 @@ Route::group(['namespace' => 'Farmacoseguridad'], function () {
 
 Route::group(['namespace' => 'Covid'], function () {
     Route::resource('encuestacovid', 'EncuestacovidController');
-    Route::get('admincovid.export', 'AdmincovidController@export')->name('admincovid.export');
+    Route::get('admincovid/export', 'AdmincovidController@export')->name('admincovid.export');
     Route::get('admincovid/related/{id}', 'AdmincovidController@related')->name('admincovid.related');
     Route::put('admincovid/related/update/{id}', 'AdmincovidController@updaterelated')->name('admincovid.related.update');
     Route::get('admincovid/sample/{id}', 'AdmincovidController@sample')->name('admincovid.sample');

@@ -67,12 +67,16 @@
                     </tr>
                   </tbody>
                 </table>
+              <div class="form-group">
+                  <label for="feedback">Seguimiento:</label>
+                  <textarea class="form-control" name="feedback" readonly>{{ $pqrs->feedback }}</textarea>
+              </div>
                 <form action="{{ url('/adminpqrs/' . $pqrs->id) }}" method="post">
                   {{ csrf_field() }}
                   {{ method_field('PATCH') }}
                   <div class="form-group">
-                    <label for="notes">Respuesta:</label>
-                    <textarea class="form-control" name="feedback" id="feedback">{{ $pqrs->feedback }}</textarea>
+                    <label for="newfeedback">Respuesta:</label>
+                    <textarea class="form-control" name="newfeedback"></textarea>
                   </div>
                   <div class="callout callout-success">
                     <div class="form-check">

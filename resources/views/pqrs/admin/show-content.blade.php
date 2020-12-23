@@ -69,7 +69,7 @@
                 </table>
                 <div class="form-group">
                   <label for="notes">Respuesta:</label>
-                  <textarea class="form-control" name="feedback" id="feedback">{{ $pqrs->feedback }}</textarea>
+                  <textarea class="form-control" name="feedback" id="feedback" readonly>{{ $pqrs->feedback }}</textarea>
                 </div>
               </div>
             </div>
