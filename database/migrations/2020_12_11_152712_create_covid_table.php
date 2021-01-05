@@ -16,6 +16,7 @@ class CreateCovidTable extends Migration
         Schema::create('covid', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('employee_id');
+            $table->string('employee_document', 50);
             $table->string('worktype', 50);
             $table->float('temperature');
             $table->text('symptoms')->nullable();

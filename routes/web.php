@@ -34,6 +34,7 @@ Route::group(['namespace' => 'Pqrs'], function () {
     Route::get('adminpqrs/search/{id}', 'AdminpqrsController@search')->name('adminpqrs.search');
     Route::post('adminpqrs/find', 'AdminpqrsController@find')->name('adminpqrs.find');
     Route::get('adminpqrs/export', 'AdminpqrsController@export')->name('adminpqrs.export');
+    Route::get('adminpqrs/download', 'AdminpqrsController@download')->name('adminpqrs.download');
     Route::resource('adminpqrs', 'AdminpqrsController');
 });
 

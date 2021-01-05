@@ -13,7 +13,13 @@ class PqrsExport implements FromCollection, WithHeadings
      */
     public function collection()
     {
-        return Pqrs::all();
+        $pqrs = Pqrs::all();
+        return $pqrs;
+    }
+
+    public function array(): array
+    {
+        return [];
     }
 
     public function headings(): array

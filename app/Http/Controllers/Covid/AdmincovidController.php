@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Covid;
 
 
 use App\Http\Controllers\Controller;
+use App\User;
 use App\Covid;
 use App\Employee;
 use App\CovidFollow;
@@ -209,14 +210,14 @@ class AdmincovidController extends Controller
         if ($request->state == "2") {
             $covid_follow = CovidFollow::findOrFail($id);
 
-            $user = Employee::findOrFail(auth()->user()->id);
+            $user = User::findOrFail(auth()->user()->id);
 
             $covid_follow->disability = $request->disability;
             $covid_follow->disability_date = $request->disability_date;
             $covid_follow->return_date = $request->return_date;
             $covid_follow->diagnosis = $request->diagnosis;
 
-            $covid_follow->notes = $request->notes . PHP_EOL . $user->fullname . PHP_EOL .
+            $covid_follow->notes = $request->notes . PHP_EOL . $user->name . PHP_EOL .
                 (new \DateTime())->format('Y-m-d H:i:s') . PHP_EOL . $request->follow;
 
                 if ($request->covid_positivo || $request->cerrar) {
@@ -234,14 +235,14 @@ class AdmincovidController extends Controller
         } elseif ($request->state == "3") {
             $covid_positive = CovidPositive::findOrFail($id);
 
-            $user = Employee::findOrFail(auth()->user()->id);
+            $user = User::findOrFail(auth()->user()->id);
 
             $covid_positive->contact_type = $request->contact_type;
             $covid_positive->description = $request->description;
             $covid_positive->symptoms = $request->symptoms;
             $covid_positive->treatment = $request->treatment;
 
-            $covid_positive->notes = $covid_positive->notes . PHP_EOL . $user->fullname . PHP_EOL .
+            $covid_positive->notes = $covid_positive->notes . PHP_EOL . $user->name . PHP_EOL .
                 (new \DateTime())->format('Y-m-d H:i:s') . PHP_EOL . $request->follow;
 
                 if ($request->cerrar) {
@@ -327,8 +328,10 @@ class AdmincovidController extends Controller
                 ->whereIn('covid_state_id', [2, 3])
                 ->get();
             if ($covidReport->isEmpty()) {
+                $document = Employee::findOrFail($input["employee_id"])->first();
                 $newcovid = new Covid;
                 $newcovid->employee_id = $input["employee_id"];
+                $newcovid->employee_document = $document->doctype . $document->document;
                 $newcovid->worktype = 'OFICINA';
                 $newcovid->temperature = 36;
                 $newcovid->close_contact = 'SI';

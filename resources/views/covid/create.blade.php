@@ -53,7 +53,7 @@
                             <div class="card-body">
                                 <div class="form-row">
                                     <div class="form-group col-md-4">
-                                        <label for="worktype">Tipo de trabajo a realizar hoy *</label>
+                                        <label for="worktype">Trabajo a realizar hoy *</label>
                                         <select name="worktype" class="form-control" required aria-required="true">
                                             <option value="" {{ old('worktype') == "" ? "selected" : "" }} disabled hidden></option>
                                             <option value="OFICINA" {{ old('worktype') == "OFICINA" ? "selected" : "" }}>Presencial</option>

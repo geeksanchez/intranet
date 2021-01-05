@@ -58,10 +58,12 @@ class EncuestacovidController extends Controller
             ->value('id');
         if ($employee_id) {
             $input["employee_id"] = $employee_id;
+            $input["employee_document"] = $request->input('doctype') . $request->input('document');
             $input['worktype'] = $request->input('worktype');
             $input['temperature'] = $request->input('temperature');
             $input['symptoms'] = json_encode($request->input('symptom'));
             $input['close_contact'] = $request->input('close_contact');
+//            dd($input);
             if ((count($request->input('symptom')) == 1) && ($request->input('symptom')[0] == "NINGUNO") && ($request->input('close_contact') == "NO") && ($request->input('temperature') < 37.5)) {
                 $input['covid_state_id'] = 1;
                 $covid = Covid::create($input);
